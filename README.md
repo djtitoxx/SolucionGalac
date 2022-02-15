@@ -14,6 +14,7 @@ Ejecutar los siguientes comandos en el Package Manager Console, para realizar
 la migración de la Base de Datos
 
 Add-Migration InitialMigration
+
 update-database
 
 
