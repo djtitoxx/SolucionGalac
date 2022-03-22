@@ -38,8 +38,8 @@ namespace ProductosAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Metodo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Precio")
                         .HasColumnType("real");

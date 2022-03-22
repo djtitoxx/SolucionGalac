@@ -180,6 +180,58 @@ namespace ProductosAPI.Services
 
             return logProducto;
         }
+
+        public async Task<bool> UpdatePrecioProductoAsync(float porcentaje)
+        {
+            try
+            {
+
+                var todosProductos = await GetProductosAsync();
+                var men = "";
+                if(porcentaje > 0)
+                {
+                    var m1 = "Aumento";
+                    men = m1;
+                }
+                else
+                {
+                    var m1 = "Reducción";
+                    men = m1;
+                }
+                
+                foreach(var producto in todosProductos)
+                {
+                   
+                    float numero = porcentaje/100;
+                    float descuento = producto.Precio * numero;
+                    float precioActual = producto.Precio + descuento;
+                    var message = men + " de Precio en " + porcentaje + " %" + "/ Precio Actual: " + precioActual;
+
+                    //Registro para Log
+                    await LogProducto(producto, message);
+
+                    producto.Precio += descuento;
+
+                   
+
+                    _dbContext.Entry(producto).State = EntityState.Modified;
+                    await _dbContext.SaveChangesAsync();
+
+                    
+
+                }
+                  
+                    return true;
+                
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
+        
     }
 
         

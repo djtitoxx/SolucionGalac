@@ -10,7 +10,7 @@ using ProductosAPI.DbContexts;
 namespace ProductosAPI.Migrations
 {
     [DbContext(typeof(ProductosDbContext))]
-    [Migration("20220215085004_InitialMigration")]
+    [Migration("20220215184252_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,8 +40,8 @@ namespace ProductosAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Metodo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Precio")
                         .HasColumnType("real");

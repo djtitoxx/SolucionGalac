@@ -48,6 +48,21 @@ namespace ProductosAPI.Controllers
             }
         }
 
+        [HttpPut("UpdatePrecioMasivo/{porcentaje:int}")]
+        public async Task<ActionResult<float>> UpdatePrecioProductoAsync(float porcentaje)
+        {
+            try
+            {
+                var actualizado = await _productoService.UpdatePrecioProductoAsync(porcentaje);
+                
+                return Ok("Los precios se han modificado correctamente!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<Producto>> CreateProductoAsync(Producto producto)
         {
