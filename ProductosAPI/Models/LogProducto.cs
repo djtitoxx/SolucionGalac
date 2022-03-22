@@ -20,7 +20,7 @@ namespace ProductosAPI.Models
         public float Precio { get; set; }
         public int Existencias { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(100)]
         public string Metodo { get; set; }
 
         public DateTime Fecha { get; set; }

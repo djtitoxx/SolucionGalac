@@ -17,7 +17,7 @@ namespace ProductosAPI.Migrations
                     Descripcion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false),
                     Existencias = table.Column<int>(type: "int", nullable: false),
-                    Metodo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Metodo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     usuario = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true)
                 },
