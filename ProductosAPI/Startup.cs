@@ -37,10 +37,10 @@ namespace ProductosAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductosAPI", Version = "v1" });
             });
 
-            //Inyeccion de Cadena de Conexion
+            //NOTA: Inyeccion de Cadena de Conexion
             services.AddDbContext<ProductosDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MyConnection")));
             
-            //Devolviendo instancia de clase por peticion HTTP
+            //NOTA: Devolviendo instancia de clase por peticion HTTP
             services.AddTransient<IProductoService, ProductoService>();
         }
 

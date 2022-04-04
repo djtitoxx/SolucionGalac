@@ -34,6 +34,8 @@ namespace ProductosAPI.Controllers
         }
 
         [HttpGet("{productoId:int}", Name = "GetProductoId")]
+              
+
         public async Task<ActionResult<Producto>> GetProductoByIdAsync(int productoId)
         {
             try
