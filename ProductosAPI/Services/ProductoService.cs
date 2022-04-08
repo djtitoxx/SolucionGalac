@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using AutoMapper;
+using ProductosAPI.DTO;
 
 namespace ProductosAPI.Services
 {
@@ -12,22 +14,28 @@ namespace ProductosAPI.Services
     {
         //Inyeccion de Dependencia
         private readonly ProductosDbContext _dbContext;
-        public ProductoService(ProductosDbContext dbContext)
+        private readonly IMapper _mapper;
+        public ProductoService(ProductosDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public async Task<Producto> CreateProductoAsync(Producto producto)
+        public async Task<ProductoDTO> CreateProductoAsync(ProductoDTO producto)
         {
             try
             {
+                Producto request_producto = _mapper.Map<Producto>(producto);
+                await _dbContext.Productos.AddAsync(request_producto);
+             await _dbContext.SaveChangesAsync();
                 
-                await _dbContext.Productos.AddAsync(producto);
-                await _dbContext.SaveChangesAsync();
 
-               OperationProducto operacion = new OperationProducto();
-                operacion.ProductoId = producto.Id;
+
+
+                OperationProducto operacion = new OperationProducto();
+                operacion.ProductoId = request_producto.Id;
                 operacion.Precio = producto.Precio;
+                operacion.Precio = request_producto.Precio;
                 operacion.Fecha = System.DateTime.Now;
                 operacion.Cantidad = producto.Existencias;
                 operacion.usuario = "Admin";
@@ -36,7 +44,7 @@ namespace ProductosAPI.Services
                 await _dbContext.SaveChangesAsync();
 
                 //Registro para Log
-                await LogProducto(producto, "Crear Producto");
+               // await LogProducto(producto, "Crear Producto");
 
                 return producto;
             }
@@ -54,6 +62,21 @@ namespace ProductosAPI.Services
             {
                 var productos = await _dbContext.Productos.ToListAsync();
                 return productos;
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<ProductoDTO>> GetApiProductosAsync()
+        {
+            try
+            {
+                var productos = await _dbContext.Productos.ToListAsync();
+                var productosDTO = _mapper.Map<List<ProductoDTO>>(productos);
+                return productosDTO;
             }
             catch (System.Exception)
             {
@@ -123,16 +146,17 @@ namespace ProductosAPI.Services
             }
         }
 
-        public async Task<OperationProducto> OperationAddProducto(OperationProducto operacionProducto)
+        public async Task<AddProductoDTO> OperationAddProducto(AddProductoDTO operacionProducto)
         {
-
-            operacionProducto.usuario = "Admin";
-            await _dbContext.OperationProducto.AddAsync(operacionProducto);
+            OperationProducto request_operacion = _mapper.Map<OperationProducto>(operacionProducto);
+            request_operacion.usuario = "Admin";
+            request_operacion.Fecha = System.DateTime.Now;
+            await _dbContext.OperationProducto.AddAsync(request_operacion);
             await _dbContext.SaveChangesAsync();
                         
-            var producto = await GetProductoByIdAsync(operacionProducto.ProductoId);
-            producto.Existencias += operacionProducto.Cantidad;
-            producto.Precio = operacionProducto.Precio;
+            var producto = await GetProductoByIdAsync(request_operacion.ProductoId);
+            producto.Existencias += request_operacion.Cantidad;
+            producto.Precio = request_operacion.Precio;
 
             _dbContext.Entry(producto).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
@@ -140,23 +164,26 @@ namespace ProductosAPI.Services
             return operacionProducto;
         }
 
-        public async Task<OperationProducto> OperationSubtractProducto(OperationProducto operacionProducto)
+        public async Task<SubstractProductoDTO> OperationSubtractProducto(SubstractProductoDTO operacionProducto)
         {
-            var producto = await GetProductoByIdAsync(operacionProducto.ProductoId);
+            OperationProducto request_operacion = _mapper.Map<OperationProducto>(operacionProducto);
+            var producto = await GetProductoByIdAsync(request_operacion.ProductoId);
 
             if (operacionProducto.Cantidad > producto.Existencias)
             {
-                operacionProducto.usuario = "error";
+                request_operacion.usuario = "error";
+                request_operacion.Fecha = System.DateTime.Now;
                 return operacionProducto;
             }
 
-            operacionProducto.usuario = "Admin";
-            operacionProducto.Cantidad = operacionProducto.Cantidad * -1;
-            await _dbContext.OperationProducto.AddAsync(operacionProducto);
+            request_operacion.usuario = "Admin";
+            request_operacion.Fecha = System.DateTime.Now;
+            request_operacion.Cantidad = request_operacion.Cantidad * -1;
+            await _dbContext.OperationProducto.AddAsync(request_operacion);
             await _dbContext.SaveChangesAsync();
 
             
-            producto.Existencias += operacionProducto.Cantidad;
+            producto.Existencias += request_operacion.Cantidad;
             _dbContext.Entry(producto).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
 

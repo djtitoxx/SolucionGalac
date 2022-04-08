@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductosAPI.DbContexts;
 using ProductosAPI.Services.Contracts;
 using ProductosAPI.Services;
+using AutoMapper;
 
 namespace ProductosAPI
 {
@@ -42,6 +43,17 @@ namespace ProductosAPI
             
             //NOTA: Devolviendo instancia de clase por peticion HTTP
             services.AddTransient<IProductoService, ProductoService>();
+
+            
+            //NOTA: LLamado al Automapper
+            var mapperConfig = new MapperConfiguration(m =>
+            {
+                m.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductosAPI.DTO;
 using ProductosAPI.Models;
 using ProductosAPI.Services.Contracts;
 using System;
@@ -14,18 +16,20 @@ namespace ProductosAPI.Controllers
     {
         //Inyeccion de dependencias!
         private readonly IProductoService _productoService;
-        public ProductoController(IProductoService productoService)
+        private readonly IMapper _mapper;
+        public ProductoController(IProductoService productoService, IMapper mapper)
         {            
             _productoService = productoService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Producto>>> GetProductosAsync()
+        public async Task<ActionResult<List<ProductoDTO>>> GetApiProductosAsync()
         {
             try
             {
-                var productos = await _productoService.GetProductosAsync();
-                return Ok(productos);
+                var productos = await _productoService.GetApiProductosAsync();
+                return Ok(productos);//Mapping de lista producto a producto dto
             }
             catch (Exception ex)
             {
@@ -66,13 +70,14 @@ namespace ProductosAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Producto>> CreateProductoAsync(Producto producto)
+        public async Task<ActionResult<ProductoDTO>> CreateProductoAsync(ProductoDTO producto)
         {
             try
             {
                 var savedProducto = await _productoService.CreateProductoAsync(producto);
 
-                return CreatedAtRoute("GetProductoId", new { productoId  = savedProducto.Id}, savedProducto);
+                return Ok("Producto Creado");
+               // return CreatedAtRoute("GetProductoId", new { productoId  = savedProducto.Id}, savedProducto);
             }
             catch (Exception ex)
             {
@@ -81,7 +86,7 @@ namespace ProductosAPI.Controllers
         }
 
         [HttpPost("AddProducto")]
-        public async Task<ActionResult<OperationProducto>> OperationAddProducto(OperationProducto operationProducto)
+        public async Task<ActionResult<AddProductoDTO>> OperationAddProducto(AddProductoDTO operationProducto)
         {
             try
             {
@@ -96,7 +101,7 @@ namespace ProductosAPI.Controllers
         }
 
         [HttpPost("SubtractProducto")]
-        public async Task<ActionResult<OperationProducto>> OperationSubtractProducto(OperationProducto operationProducto)
+        public async Task<ActionResult<SubstractProductoDTO>> OperationSubtractProducto(SubstractProductoDTO operationProducto)
         {
             try
             {
